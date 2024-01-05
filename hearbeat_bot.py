@@ -27,6 +27,13 @@ UNIT = 'hours' # Change this vaulue to specify the time unit ('seconds', 'minute
 
 
 async def schedule_message():
+    """
+    Asynchronous function to schedule and send announcement messages at regular intervals.
+    
+    This function runs indefinitely, sleeping for the specified interval duration
+    and then sending predefined announcement messages to specific channels.
+    """
+
     while True:
         await asyncio.sleep(get_interval_duration())
         await send_message(ANNOUNCEMENT_MESSAGE_1, CHANNEL_ID_1)
@@ -34,6 +41,12 @@ async def schedule_message():
 
 
 def get_interval_duration():
+    """
+    Calculate the total duration for the sleep interval based on the specified time unit and interval.
+    
+    Returns:
+        int: The total duration for the sleep interval in seconds.
+    """
     unit_multipliers = {
         'seconds': 1,
         'minutes': 60,
@@ -94,11 +107,6 @@ async def history(ctx):
         final_message = '\n'.join(message_list)
         
         await send_message(final_message, HISTORY_CHANNEL_ID)
-
-
-@bot.command()
-async def hello(ctx):
-    print("Hello World!")
 
 
 @bot.event
