@@ -11,13 +11,20 @@ import os
 
 # Constants 
 API_KEY = os.getenv('TEST_API_KEY')
+
+# Announcement Messages. Add more messages here
 ANNOUNCEMENT_MESSAGE_1 = 'This is a test message to be sent to channel one'
 ANNOUNCEMENT_MESSAGE_2 = 'This is a test message to be sent to channel two'
+ANNOUNCEMENT_MESSAGE_3 = 'Channel 3 test meessage'
+
+#Channel IDs. Add more channel IDs here
 CHANNEL_ID_1 = '633e93af-d7ee-4be4-9634-9a6da3ecdb05'
 CHANNEL_ID_2 = '8f86f53c-9341-4a1d-8475-8f3bb89716e3'
+CHANNEL_ID_3 = 'ab99fdde-d575-4de6-9f83-86d8e762adb7'
+
+
 BOT_ID = '58e580ab-a4ba-4d2d-80f3-899266a66006'
 USER_ID = 'dKbL9V94'
-MESSAGE_CONTENT = 'This is a direct message from a bot'
 HISTORY_CHANNEL_ID = 'a4132f77-138b-4dbf-bb61-9e923cffc282'
 SERVER_ADMIN = 'dKbL9V94'
 
@@ -37,7 +44,8 @@ async def schedule_message():
     while True:
         await asyncio.sleep(get_interval_duration())
         await send_message(ANNOUNCEMENT_MESSAGE_1, CHANNEL_ID_1)
-        await send_message(ANNOUNCEMENT_MESSAGE_2, CHANNEL_ID_2)      
+        await send_message(ANNOUNCEMENT_MESSAGE_2, CHANNEL_ID_2) 
+        await send_message(ANNOUNCEMENT_MESSAGE_3, CHANNEL_ID_3)     
 
 
 def get_interval_duration():
