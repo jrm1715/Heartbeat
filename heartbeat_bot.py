@@ -98,9 +98,9 @@ async def history(ctx):
     message_list = []
     messages = await channel.history(limit=30)        
         
-    for message in messages:                  
-        formatted_message = f"{message.author}: {message.content}"
+    for message in messages:        
         if (message.author.id != "dz01zWpA"):
+            formatted_message = f"{message.author}: {message.content}"
             message_list.append(formatted_message)
 
     message_list.reverse()
