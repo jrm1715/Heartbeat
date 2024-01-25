@@ -22,12 +22,6 @@ CHANNEL_ID_1 = '633e93af-d7ee-4be4-9634-9a6da3ecdb05'
 CHANNEL_ID_2 = '8f86f53c-9341-4a1d-8475-8f3bb89716e3'
 CHANNEL_ID_3 = 'ab99fdde-d575-4de6-9f83-86d8e762adb7'
 
-
-BOT_ID = '58e580ab-a4ba-4d2d-80f3-899266a66006'
-USER_ID = 'dKbL9V94'
-HISTORY_CHANNEL_ID = 'a4132f77-138b-4dbf-bb61-9e923cffc282'
-SERVER_ADMIN = 'dKbL9V94'
-
 # Time configuration
 INTERVAL = 12 # Change this value to adjust the interval duration
 UNIT = 'hours' # Change this vaulue to specify the time unit ('seconds', 'minutes', 'hours') 
@@ -90,31 +84,30 @@ async def send_message(message, channel_id):
                     print(f'Error sending message: {await response.text()}')
 
 
-# Bot commands
+# Bot command prefix
 bot = commands.Bot(command_prefix='!heart ')
 
 
-# Gets the last 30 messages from the given channel and post them to the designated channel called 'History'
+# Gets the last 30 messages from the channel the command was received and posts them into that same channel
 @bot.command()
 async def history(ctx):
     channel_command_rec = ctx.channel.id
     channel_author_id = ctx.author.id
-
-    if channel_command_rec == HISTORY_CHANNEL_ID and channel_author_id == SERVER_ADMIN:
-        channel = bot.get_channel(CHANNEL_ID_1)
-        message_list = []
-        messages = await channel.history(limit=30)
+    
+    channel = bot.get_channel(channel_command_rec)
+    message_list = []
+    messages = await channel.history(limit=30)        
         
-        
-        for message in messages:                  
-            formatted_message = f"{message.author}: {message.content}"
-            message_list.append(formatted_message)            
+    for message in messages:                  
+        formatted_message = f"{message.author}: {message.content}"
+        if (message.author.id != "dz01zWpA"):
+            message_list.append(formatted_message)
 
-        message_list.reverse()
+    message_list.reverse()
 
-        final_message = '\n'.join(message_list)
-        
-        await send_message(final_message, HISTORY_CHANNEL_ID)
+    final_message = '\n'.join(message_list)    
+    
+    await send_message(final_message, channel_command_rec)
 
 
 @bot.event
