@@ -10,7 +10,7 @@ import schedule
 import os
 
 # Constants 
-API_KEY = os.getenv('TEST_API_KEY')
+API_KEY = os.getenv('HEARTBEAT_API_KEY')
 
 # Announcement Messages. Add more messages here
 ANNOUNCEMENT_MESSAGE_1 = 'This is a test message to be sent to channel one'
