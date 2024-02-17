@@ -2,11 +2,9 @@ from guilded import ChatMessage
 from guilded.ext import commands
 from guilded import ChatMessage, User
 from guilded.abc import Messageable
-import functools
 import aiohttp
 import asyncio
-import guilded
-import schedule
+import time
 import os
 
 # Constants 
@@ -25,7 +23,10 @@ CHANNEL_ID_3 = 'ab99fdde-d575-4de6-9f83-86d8e762adb7'
 # Time configuration
 INTERVAL = 12 # Change this value to adjust the interval duration
 UNIT = 'hours' # Change this vaulue to specify the time unit ('seconds', 'minutes', 'hours') 
+TIMEOUT = 15 # Timeout in minutes. Used for bot command timeout
+TIMEOUT_UNIT = 'minutes' 
 
+last_command_timestamps = {}
 
 async def schedule_message():
     """
@@ -36,13 +37,13 @@ async def schedule_message():
     """
 
     while True:
-        await asyncio.sleep(get_interval_duration())
+        await asyncio.sleep(get_interval_duration(UNIT))
         await send_message(ANNOUNCEMENT_MESSAGE_1, CHANNEL_ID_1)
         await send_message(ANNOUNCEMENT_MESSAGE_2, CHANNEL_ID_2) 
         await send_message(ANNOUNCEMENT_MESSAGE_3, CHANNEL_ID_3)     
 
 
-def get_interval_duration():
+def get_interval_duration(unit):
     """
     Calculate the total duration for the sleep interval based on the specified time unit and interval.
     
@@ -84,21 +85,13 @@ async def send_message(message, channel_id):
                     print(f'Error sending message: {await response.text()}')
 
 
-# Bot command prefix
-bot = commands.Bot(command_prefix='!heart ')
 
-
-# Gets the last 30 messages from the channel the command was received and posts them into that same channel
-@bot.command()
-async def history(ctx):
-    channel_command_rec = ctx.channel.id
-    channel_author_id = ctx.author.id
-    
+async def send_message_history(channel_command_rec):
     channel = bot.get_channel(channel_command_rec)
     message_list = []
-    messages = await channel.history(limit=30)        
+    messages = await channel.history(limit=30)       
         
-    for message in messages:        
+    for message in messages:
         if (message.author.id != "dz01zWpA"):
             formatted_message = f"{message.author}: {message.content}"
             message_list.append(formatted_message)
@@ -109,6 +102,36 @@ async def history(ctx):
     
     await send_message(final_message, channel_command_rec)
 
+
+def get_elapsed_time(channel_id, current_time):
+    last_timestamp = last_command_timestamps.get(channel_id, None)
+
+    if last_timestamp is not None:
+        elapsed_time = current_time - last_timestamp
+        return int(elapsed_time)
+    else:
+        return 0
+
+
+# Bot command prefix
+bot = commands.Bot(command_prefix='!heart ')
+
+
+# Gets the last 30 messages from the channel the command was received and posts them into that same channel
+@bot.command()
+async def history(ctx):
+    timeout_message = "This command can only be used every 5 minutes. Please try again later!"
+    channel_command_rec = ctx.channel.id
+    
+    current_time = time.time()
+    elapsed_time = get_elapsed_time(channel_command_rec, current_time)
+    last_command_timestamps[channel_command_rec] = current_time
+
+    if (elapsed_time <= 20 and elapsed_time != 0):
+        await send_message(timeout_message, channel_command_rec)
+    else:
+        await send_message_history(channel_command_rec)
+        
 
 @bot.event
 async def on_ready():
