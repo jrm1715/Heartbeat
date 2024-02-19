@@ -85,7 +85,6 @@ async def send_message(message, channel_id):
                     print(f'Error sending message: {await response.text()}')
 
 
-
 async def send_message_history(channel_command_rec):
     channel = bot.get_channel(channel_command_rec)
     message_list = []
@@ -120,17 +119,22 @@ bot = commands.Bot(command_prefix='!heart ')
 # Gets the last 30 messages from the channel the command was received and posts them into that same channel
 @bot.command()
 async def history(ctx):
-    timeout_message = "This command can only be used every 5 minutes. Please try again later!"
-    channel_command_rec = ctx.channel.id
-    
+    max_time = 300 # in seconds
+    channel_command_rec = ctx.channel.id    
     current_time = time.time()
     elapsed_time = get_elapsed_time(channel_command_rec, current_time)
-    last_command_timestamps[channel_command_rec] = current_time
+    time_left = (max_time - elapsed_time) / 60
+    timeout_message = f"This command can only be used every 5 minutes. Please try again in {int(time_left)} minutes"
+    print(f"Elapsed time: {elapsed_time}")
+    
 
-    if (elapsed_time <= 20 and elapsed_time != 0):
+    if (elapsed_time <= max_time and elapsed_time != 0):
         await send_message(timeout_message, channel_command_rec)
-    else:
+    else:     
         await send_message_history(channel_command_rec)
+        last_command_timestamps[channel_command_rec] = current_time
+
+    
         
 
 @bot.event
