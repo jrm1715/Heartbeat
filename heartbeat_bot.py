@@ -85,13 +85,15 @@ async def send_message(message, channel_id):
                     print(f'Error sending message: {await response.text()}')
 
 
+# sends message history of given channel command was issued
 async def send_message_history(channel_command_rec):
     channel = bot.get_channel(channel_command_rec)
     message_list = []
+    exclude_media = "![]" # This characters indicate media post
     messages = await channel.history(limit=30)       
         
     for message in messages:
-        if (message.author.id != "dz01zWpA"):
+        if (message.author.id != "dz01zWpA" and exclude_media not in message.content):
             formatted_message = f"{message.author}: {message.content}"
             message_list.append(formatted_message)
 
@@ -102,6 +104,7 @@ async def send_message_history(channel_command_rec):
     await send_message(final_message, channel_command_rec)
 
 
+# gets the elapsed time
 def get_elapsed_time(channel_id, current_time):
     last_timestamp = last_command_timestamps.get(channel_id, None)
 
@@ -119,7 +122,7 @@ bot = commands.Bot(command_prefix='!heart ')
 # Gets the last 30 messages from the channel the command was received and posts them into that same channel
 @bot.command()
 async def history(ctx):
-    max_time = 300 # in seconds
+    max_time = 1 # in seconds
     channel_command_rec = ctx.channel.id    
     current_time = time.time()
     elapsed_time = get_elapsed_time(channel_command_rec, current_time)
@@ -132,9 +135,7 @@ async def history(ctx):
         await send_message(timeout_message, channel_command_rec)
     else:     
         await send_message_history(channel_command_rec)
-        last_command_timestamps[channel_command_rec] = current_time
-
-    
+        last_command_timestamps[channel_command_rec] = current_time    
         
 
 @bot.event
