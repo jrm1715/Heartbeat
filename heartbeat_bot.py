@@ -94,7 +94,7 @@ async def send_message_history(channel_command_rec):
         
     for message in messages:
         if (message.author.id != "dz01zWpA" and exclude_media not in message.content):
-            formatted_message = f"{message.author}: {message.content}"
+            formatted_message = f"**{message.author}**: {message.content}"
             message_list.append(formatted_message)
 
     message_list.reverse()
@@ -122,7 +122,7 @@ bot = commands.Bot(command_prefix='!heart ')
 # Gets the last 30 messages from the channel the command was received and posts them into that same channel
 @bot.command()
 async def history(ctx):
-    max_time = 1 # in seconds
+    max_time = 600 # in seconds
     channel_command_rec = ctx.channel.id    
     current_time = time.time()
     elapsed_time = get_elapsed_time(channel_command_rec, current_time)
