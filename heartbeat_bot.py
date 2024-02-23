@@ -128,7 +128,6 @@ async def history(ctx):
     elapsed_time = get_elapsed_time(channel_command_rec, current_time)
     time_left = (max_time - elapsed_time) / 60
     timeout_message = f"This command can only be used every 5 minutes. Please try again in {int(time_left)} minutes"
-    print(f"Elapsed time: {elapsed_time}")
     
 
     if (elapsed_time <= max_time and elapsed_time != 0):
