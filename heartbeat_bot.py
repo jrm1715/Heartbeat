@@ -87,7 +87,6 @@ async def send_message(message, channel_id):
                     print(f'Error sending message: {await response.text()}')
 
 
-
 async def send_message_history(channel_command_rec):
     """
     sends message history of given channel command was issued
