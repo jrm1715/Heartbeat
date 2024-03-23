@@ -7,11 +7,13 @@ import asyncio
 import time
 import os
 
+
 # Constants 
 API_KEY = os.getenv('HEARTBEAT_API_KEY')
 
 # Announcement Messages. Add more messages here
-ANNOUNCEMENT_MESSAGE_1 = 'This is a test message to be sent to channel one'
+ANNOUNCEMENT_MESSAGE_1 = '''Just a test message'''
+
 ANNOUNCEMENT_MESSAGE_2 = 'This is a test message to be sent to channel two'
 ANNOUNCEMENT_MESSAGE_3 = 'Channel 3 test meessage'
 
@@ -21,8 +23,8 @@ CHANNEL_ID_2 = '8f86f53c-9341-4a1d-8475-8f3bb89716e3'
 CHANNEL_ID_3 = 'ab99fdde-d575-4de6-9f83-86d8e762adb7'
 
 # Time configuration
-INTERVAL = 12 # Change this value to adjust the interval duration
-UNIT = 'hours' # Change this vaulue to specify the time unit ('seconds', 'minutes', 'hours') 
+INTERVAL = 10 # Change this value to adjust the interval duration
+UNIT = 'seconds' # Change this vaulue to specify the time unit ('seconds', 'minutes', 'hours') 
 TIMEOUT = 15 # Timeout in minutes. Used for bot command timeout
 TIMEOUT_UNIT = 'minutes' 
 
@@ -85,8 +87,17 @@ async def send_message(message, channel_id):
                     print(f'Error sending message: {await response.text()}')
 
 
-# sends message history of given channel command was issued
+
 async def send_message_history(channel_command_rec):
+    """
+    sends message history of given channel command was issued
+
+    Args:
+        channel_command_rec (str)): The ID of the channel to send the message history
+
+    Returns:
+        None
+    """
     channel = bot.get_channel(channel_command_rec)
     message_list = []
     exclude_media = "![]" # This characters indicate media post
@@ -106,6 +117,16 @@ async def send_message_history(channel_command_rec):
 
 # gets the elapsed time
 def get_elapsed_time(channel_id, current_time):
+    """
+    Calculate the elapsed time since the last command was issued for a specific channel.
+
+    Parameters:
+        channel_id (str): The ID of the channel.
+        current_time (float): The current time in seconds since the epoch.
+
+    Returns:
+        int: The elapsed time in seconds.
+    """
     last_timestamp = last_command_timestamps.get(channel_id, None)
 
     if last_timestamp is not None:
@@ -119,9 +140,17 @@ def get_elapsed_time(channel_id, current_time):
 bot = commands.Bot(command_prefix='!heart ')
 
 
-# Gets the last 30 messages from the channel the command was received and posts them into that same channel
 @bot.command()
 async def history(ctx):
+    """
+    Gets the last 30 messages from the channel the command was received and posts them into that same channel.
+
+    Parameters:
+        ctx (Context): The context object representing the invocation context of the command.
+
+    Returns:
+        None
+    """
     max_time = 600 # in seconds
     channel_command_rec = ctx.channel.id    
     current_time = time.time()
@@ -139,6 +168,12 @@ async def history(ctx):
 
 @bot.event
 async def on_ready():
+    """
+    Event handler for when the bot is ready.
+
+    Returns:
+        None
+    """
     print('Bot is ready.')
 
 
